@@ -132,7 +132,8 @@ bq query --use_legacy_sql=false "SELECT @@project_id AS project_id"
 #### Synthetic Data
 
 SQL -> generate synthetic data
-‍‍‍```plaintext
+
+```plaintext
 ├── sql/
 │   ├── 00_create_schemas.sql
 │   ├── 01_generate_customers.sql
@@ -143,6 +144,7 @@ SQL -> generate synthetic data
 │   ├── 06_create_prediction_input.sql 
 │   ├── 07_create_churn_scored_users.sql
 │   └── 08_find_churn_targets.sql
+
 ```
 For runing sql scripts:
 
@@ -151,7 +153,6 @@ Google Cloud Console → BigQuery
 Also through python script
 
 ```bash
-
 pip install google-cloud-bigquery
 
 ```
@@ -186,6 +187,7 @@ job = client.query(sql)
 job.result()  # Waits for completion
 
 print("Customers table created.")
+
 ```
 
 
@@ -231,6 +233,7 @@ Create realistic customer behavior using SQL:
 
 ```plaintext
 user_id,  signup date, engagement signals
+
 ```
 
 Store in BigQuery (analytics.customers, analytics.events)
@@ -268,7 +271,7 @@ events_30d, logins_30d, purchases_30d, active_days_30d
 
 Save as:
 
-‍‍‍```plaintext
+‍‍```plaintext
 ml.user_features
 ‍‍‍```
 
@@ -290,6 +293,8 @@ Run Python locally (VS Code / terminal):
 ```Python
 python training/train_vertex_automl.py
 ```
+
+
 Vertex AI reads data directly from BigQuery
 
 AutoML trains & evaluates multiple models
@@ -348,12 +353,17 @@ predicted_churned.scores
 | 1               | 1          | 0          | {"classes":["0","1"],"scores":["0.25727182626724243","0.74272811412811279"]} | 0             | 94d02ea8-040a-43e7-a8b2-ccb7935bcc4f |
 | 1               | 1          | 0          | {"classes":["0","1"],"scores":["0.25727182626724243","0.74272811412811279"]} | 0             | e1814003-e579-435e-aed9-17704a8eea46 |
 | 1               | 2          | 0          | {"classes":["0","1"],"scores":["0.30248343944549561","0.69751656055450439"]} | 0             | 0d62fb0f-fecb-4551-9b21-ef5f3a578f8c |
+
 ```
+
+
 Extract churn probability:
 
 ```SQL
 predicted_churned.scores[OFFSET(1)]
 ```
+
+
 (Probability of class "1" = churn)
 
 
@@ -367,7 +377,6 @@ Optionally materialize:
 
 ```plaintext
 
-
 e0008296-d62c-45ff-bf37-2991a9316a26	0.74272811412811279	EMAIL_NUDGE
 6533000d-f279-4c12-a445-ef27281ba6ed	0.70975381135940552	MONITOR
 7e2f44c4-5216-4122-9d29-4d4cd937690c	0.74272811412811279	EMAIL_NUDGE
@@ -378,6 +387,5 @@ a37141b8-e881-463f-a562-6e7fccb6c513	0.748114824295044	EMAIL_NUDGE
 ed78cd71-a6ed-4239-a5c9-b5dd42dc0754	0.70975381135940552	MONITOR
 3eeeb5f2-9ccf-4e78-8099-9dcfb66a6ed6	0.70975381135940552	MONITOR
 ```
-
 
 ![](Visualization/churn_probability%20by%20user_id.png)
